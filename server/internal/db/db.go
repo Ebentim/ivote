@@ -115,8 +115,8 @@ func Migrate(db *gorm.DB) error {
 func SeedSuperAdmin(db *gorm.DB) error {
 	username := getEnv("SUPERADMIN_USERNAME", "admin")
 	password := getEnv("SUPERADMIN_PASSWORD", "changeme123!")
-	email    := getEnv("SUPERADMIN_EMAIL", "admin@ivote.local")
-	name     := getEnv("SUPERADMIN_NAME", "System Administrator")
+	email := getEnv("SUPERADMIN_EMAIL", "admin@ivote.local")
+	name := getEnv("SUPERADMIN_NAME", "System Administrator")
 
 	var count int64
 	db.Model(&models.Admin{}).Where("role = ?", models.RoleSuperAdmin).Count(&count)

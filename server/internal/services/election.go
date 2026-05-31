@@ -56,11 +56,11 @@ func (s *ElectionService) GetElection(id uuid.UUID) (*models.Election, error) {
 }
 
 type CreateElectionInput struct {
-	Title       string                   `json:"title"`
-	Description string                   `json:"description"`
+	Title       string                    `json:"title"`
+	Description string                    `json:"description"`
 	Visibility  models.ElectionVisibility `json:"visibility"`
-	StartTime   time.Time                `json:"startTime"`
-	EndTime     time.Time                `json:"endTime"`
+	StartTime   time.Time                 `json:"startTime"`
+	EndTime     time.Time                 `json:"endTime"`
 	CreatedBy   uuid.UUID
 }
 
@@ -85,11 +85,11 @@ func (s *ElectionService) CreateElection(input CreateElectionInput) (*models.Ele
 }
 
 type UpdateElectionInput struct {
-	Title       *string                   `json:"title"`
-	Description *string                   `json:"description"`
+	Title       *string                    `json:"title"`
+	Description *string                    `json:"description"`
 	Visibility  *models.ElectionVisibility `json:"visibility"`
-	StartTime   *time.Time                `json:"startTime"`
-	EndTime     *time.Time                `json:"endTime"`
+	StartTime   *time.Time                 `json:"startTime"`
+	EndTime     *time.Time                 `json:"endTime"`
 }
 
 func (s *ElectionService) UpdateElection(id uuid.UUID, input UpdateElectionInput) (*models.Election, error) {
@@ -102,11 +102,21 @@ func (s *ElectionService) UpdateElection(id uuid.UUID, input UpdateElectionInput
 	}
 
 	updates := map[string]any{}
-	if input.Title != nil       { updates["title"] = *input.Title }
-	if input.Description != nil { updates["description"] = *input.Description }
-	if input.Visibility != nil  { updates["visibility"] = *input.Visibility }
-	if input.StartTime != nil   { updates["start_time"] = *input.StartTime }
-	if input.EndTime != nil     { updates["end_time"] = *input.EndTime }
+	if input.Title != nil {
+		updates["title"] = *input.Title
+	}
+	if input.Description != nil {
+		updates["description"] = *input.Description
+	}
+	if input.Visibility != nil {
+		updates["visibility"] = *input.Visibility
+	}
+	if input.StartTime != nil {
+		updates["start_time"] = *input.StartTime
+	}
+	if input.EndTime != nil {
+		updates["end_time"] = *input.EndTime
+	}
 
 	if err := s.db.Model(election).Updates(updates).Error; err != nil {
 		return nil, err
@@ -327,9 +337,15 @@ func (s *ElectionService) UpdateContestant(electionID, contestantID uuid.UUID, n
 		return nil, echo.NewHTTPError(http.StatusNotFound, "contestant not found")
 	}
 	updates := map[string]any{}
-	if name != nil        { updates["name"] = *name }
-	if party != nil       { updates["party"] = *party }
-	if passportURL != nil { updates["passport_url"] = *passportURL }
+	if name != nil {
+		updates["name"] = *name
+	}
+	if party != nil {
+		updates["party"] = *party
+	}
+	if passportURL != nil {
+		updates["passport_url"] = *passportURL
+	}
 	if err := s.db.Model(&c).Updates(updates).Error; err != nil {
 		return nil, err
 	}

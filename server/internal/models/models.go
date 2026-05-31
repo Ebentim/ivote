@@ -79,7 +79,7 @@ type Election struct {
 	CreatedAt   time.Time          `                                    json:"createdAt"`
 	UpdatedAt   time.Time          `                                    json:"updatedAt"`
 
-	Contestants    []Contestant    `gorm:"foreignKey:ElectionID;constraint:OnDelete:CASCADE" json:"contestants"`
+	Contestants     []Contestant     `gorm:"foreignKey:ElectionID;constraint:OnDelete:CASCADE" json:"contestants"`
 	ElectionInvites []ElectionInvite `gorm:"foreignKey:ElectionID;constraint:OnDelete:CASCADE" json:"-"`
 
 	// Virtual fields (populated by services)
@@ -142,9 +142,9 @@ func (v *Vote) BeforeCreate(tx *gorm.DB) error {
 // ── DTO types ─────────────────────────────────────────────────────────────────
 
 type ElectionResult struct {
-	ElectionID  uuid.UUID            `json:"electionId"`
-	TotalVotes  int                  `json:"totalVotes"`
-	Contestants []ContestantResult   `json:"contestants"`
+	ElectionID  uuid.UUID          `json:"electionId"`
+	TotalVotes  int                `json:"totalVotes"`
+	Contestants []ContestantResult `json:"contestants"`
 }
 
 type ContestantResult struct {

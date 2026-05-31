@@ -48,9 +48,13 @@ func parseUUID(c echo.Context, param string) (uuid.UUID, error) {
 
 func parsePage(c echo.Context) (int, int) {
 	page, _ := strconv.Atoi(c.QueryParam("page"))
-	if page < 1 { page = 1 }
+	if page < 1 {
+		page = 1
+	}
 	pageSize, _ := strconv.Atoi(c.QueryParam("pageSize"))
-	if pageSize < 1 || pageSize > 200 { pageSize = 50 }
+	if pageSize < 1 || pageSize > 200 {
+		pageSize = 50
+	}
 	return page, pageSize
 }
 
@@ -83,7 +87,9 @@ func (h *Handlers) AdminLogin(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
 	}
 	token, admin, err := h.auth.AdminLogin(req.Username, req.Password)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return ok(c, map[string]any{"token": token, "admin": admin})
 }
 
@@ -96,7 +102,9 @@ func (h *Handlers) VoterLogin(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
 	}
 	token, voter, err := h.auth.VoterLogin(req.Username, req.Password)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return ok(c, map[string]any{"token": token, "voter": voter})
 }
 
@@ -109,11 +117,15 @@ func (h *Handlers) Me(c echo.Context) error {
 	claims := middleware.GetClaims(c)
 	if claims.Type == middleware.TokenAdmin {
 		admin, err := h.admin.GetAdmin(claims.UserID)
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
 		return ok(c, admin)
 	}
 	voter, err := h.voter.GetVoter(claims.UserID)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return ok(c, voter)
 }
 
@@ -123,15 +135,21 @@ func (h *Handlers) ListElections(c echo.Context) error {
 	page, pageSize := parsePage(c)
 	status := c.QueryParam("status")
 	elections, total, err := h.election.ListElections(page, pageSize, status)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return paginated(c, elections, total, page, pageSize)
 }
 
 func (h *Handlers) GetElection(c echo.Context) error {
 	id, err := parseUUID(c, "id")
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	e, err := h.election.GetElection(id)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return ok(c, e)
 }
 
@@ -155,42 +173,60 @@ func (h *Handlers) CreateElection(c echo.Context) error {
 		EndTime:     req.EndTime,
 		CreatedBy:   claims.UserID,
 	})
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return created(c, e)
 }
 
 func (h *Handlers) UpdateElection(c echo.Context) error {
 	id, err := parseUUID(c, "id")
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	var req services.UpdateElectionInput
 	if err := c.Bind(&req); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
 	}
 	e, err := h.election.UpdateElection(id, req)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return ok(c, e)
 }
 
 func (h *Handlers) PublishElection(c echo.Context) error {
 	id, err := parseUUID(c, "id")
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	e, err := h.election.PublishElection(id)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return ok(c, e)
 }
 
 func (h *Handlers) DeleteElection(c echo.Context) error {
 	id, err := parseUUID(c, "id")
-	if err != nil { return err }
-	if err := h.election.DeleteElection(id); err != nil { return err }
+	if err != nil {
+		return err
+	}
+	if err := h.election.DeleteElection(id); err != nil {
+		return err
+	}
 	return c.NoContent(http.StatusNoContent)
 }
 
 func (h *Handlers) GetElectionResults(c echo.Context) error {
 	id, err := parseUUID(c, "id")
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	results, err := h.election.GetResults(id)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return ok(c, results)
 }
 
@@ -198,7 +234,9 @@ func (h *Handlers) GetElectionResults(c echo.Context) error {
 
 func (h *Handlers) CreateContestant(c echo.Context) error {
 	electionID, err := parseUUID(c, "id")
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	var req struct {
 		Name        string `json:"name"`
 		Party       string `json:"party"`
@@ -208,15 +246,21 @@ func (h *Handlers) CreateContestant(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
 	}
 	contestant, err := h.election.CreateContestant(electionID, req.Name, req.Party, req.PassportURL)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return created(c, contestant)
 }
 
 func (h *Handlers) UpdateContestant(c echo.Context) error {
 	electionID, err := parseUUID(c, "id")
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	contestantID, err := parseUUID(c, "contestantId")
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	var req struct {
 		Name        *string `json:"name"`
 		Party       *string `json:"party"`
@@ -226,16 +270,24 @@ func (h *Handlers) UpdateContestant(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
 	}
 	c2, err := h.election.UpdateContestant(electionID, contestantID, req.Name, req.Party, req.PassportURL)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return ok(c, c2)
 }
 
 func (h *Handlers) DeleteContestant(c echo.Context) error {
 	electionID, err := parseUUID(c, "id")
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	contestantID, err := parseUUID(c, "contestantId")
-	if err != nil { return err }
-	if err := h.election.DeleteContestant(electionID, contestantID); err != nil { return err }
+	if err != nil {
+		return err
+	}
+	if err := h.election.DeleteContestant(electionID, contestantID); err != nil {
+		return err
+	}
 	return c.NoContent(http.StatusNoContent)
 }
 
@@ -243,23 +295,37 @@ func (h *Handlers) DeleteContestant(c echo.Context) error {
 
 func (h *Handlers) InviteVoter(c echo.Context) error {
 	electionID, err := parseUUID(c, "id")
-	if err != nil { return err }
-	var req struct{ VoterID string `json:"voterId"` }
+	if err != nil {
+		return err
+	}
+	var req struct {
+		VoterID string `json:"voterId"`
+	}
 	if err := c.Bind(&req); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
 	}
 	voterID, err := uuid.Parse(req.VoterID)
-	if err != nil { return echo.NewHTTPError(http.StatusBadRequest, "invalid voter id") }
-	if err := h.election.InviteVoter(electionID, voterID); err != nil { return err }
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid voter id")
+	}
+	if err := h.election.InviteVoter(electionID, voterID); err != nil {
+		return err
+	}
 	return ok(c, map[string]any{"message": "voter invited"})
 }
 
 func (h *Handlers) RemoveInvite(c echo.Context) error {
 	electionID, err := parseUUID(c, "id")
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	voterID, err := parseUUID(c, "voterId")
-	if err != nil { return err }
-	if err := h.election.RemoveInvite(electionID, voterID); err != nil { return err }
+	if err != nil {
+		return err
+	}
+	if err := h.election.RemoveInvite(electionID, voterID); err != nil {
+		return err
+	}
 	return c.NoContent(http.StatusNoContent)
 }
 
@@ -269,7 +335,9 @@ func (h *Handlers) ListVoters(c echo.Context) error {
 	page, pageSize := parsePage(c)
 	search := c.QueryParam("search")
 	voters, total, err := h.voter.ListVoters(page, pageSize, search)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return paginated(c, voters, total, page, pageSize)
 }
 
@@ -279,22 +347,32 @@ func (h *Handlers) CreateVoter(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
 	}
 	voter, err := h.voter.CreateVoter(req)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return created(c, voter)
 }
 
 func (h *Handlers) GetVoter(c echo.Context) error {
 	id, err := parseUUID(c, "id")
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	voter, err := h.voter.GetVoter(id)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return ok(c, voter)
 }
 
 func (h *Handlers) DeleteVoter(c echo.Context) error {
 	id, err := parseUUID(c, "id")
-	if err != nil { return err }
-	if err := h.voter.DeleteVoter(id); err != nil { return err }
+	if err != nil {
+		return err
+	}
+	if err := h.voter.DeleteVoter(id); err != nil {
+		return err
+	}
 	return c.NoContent(http.StatusNoContent)
 }
 
@@ -302,7 +380,9 @@ func (h *Handlers) DeleteVoter(c echo.Context) error {
 
 func (h *Handlers) ListAdmins(c echo.Context) error {
 	admins, err := h.admin.ListAdmins()
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return ok(c, admins)
 }
 
@@ -312,14 +392,20 @@ func (h *Handlers) CreateAdmin(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
 	}
 	admin, err := h.admin.CreateAdmin(req)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return created(c, admin)
 }
 
 func (h *Handlers) DeleteAdmin(c echo.Context) error {
 	id, err := parseUUID(c, "id")
-	if err != nil { return err }
-	if err := h.admin.DeleteAdmin(id); err != nil { return err }
+	if err != nil {
+		return err
+	}
+	if err := h.admin.DeleteAdmin(id); err != nil {
+		return err
+	}
 	return c.NoContent(http.StatusNoContent)
 }
 
@@ -328,16 +414,22 @@ func (h *Handlers) DeleteAdmin(c echo.Context) error {
 func (h *Handlers) VoterListElections(c echo.Context) error {
 	claims := middleware.GetClaims(c)
 	elections, err := h.election.ListElectionsForVoter(claims.UserID)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return ok(c, elections)
 }
 
 func (h *Handlers) VoterGetElection(c echo.Context) error {
 	claims := middleware.GetClaims(c)
 	id, err := parseUUID(c, "id")
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	e, err := h.election.GetElection(id)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	// Access check
 	if e.Status == models.StatusDraft {
@@ -346,7 +438,10 @@ func (h *Handlers) VoterGetElection(c echo.Context) error {
 	if e.Visibility == models.VisPrivate {
 		found := false
 		for _, vid := range e.InvitedVoters {
-			if vid == claims.UserID.String() { found = true; break }
+			if vid == claims.UserID.String() {
+				found = true
+				break
+			}
 		}
 		if !found {
 			return echo.NewHTTPError(http.StatusForbidden, "you are not invited to this election")
@@ -357,30 +452,44 @@ func (h *Handlers) VoterGetElection(c echo.Context) error {
 
 func (h *Handlers) VoterGetResults(c echo.Context) error {
 	id, err := parseUUID(c, "id")
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	results, err := h.election.GetResults(id)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	return ok(c, results)
 }
 
 func (h *Handlers) VoterCastVote(c echo.Context) error {
 	claims := middleware.GetClaims(c)
 	electionID, err := parseUUID(c, "id")
-	if err != nil { return err }
-	var req struct{ ContestantID string `json:"contestantId"` }
+	if err != nil {
+		return err
+	}
+	var req struct {
+		ContestantID string `json:"contestantId"`
+	}
 	if err := c.Bind(&req); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
 	}
 	contestantID, err := uuid.Parse(req.ContestantID)
-	if err != nil { return echo.NewHTTPError(http.StatusBadRequest, "invalid contestant id") }
-	if err := h.election.CastVote(electionID, contestantID, claims.UserID); err != nil { return err }
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid contestant id")
+	}
+	if err := h.election.CastVote(electionID, contestantID, claims.UserID); err != nil {
+		return err
+	}
 	return ok(c, map[string]any{"message": "vote cast successfully"})
 }
 
 func (h *Handlers) VoterMyVote(c echo.Context) error {
 	claims := middleware.GetClaims(c)
 	electionID, err := parseUUID(c, "id")
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	voted, contestantID := h.election.HasVoted(electionID, claims.UserID)
 	resp := map[string]any{"voted": voted}
 	if contestantID != nil {
@@ -426,18 +535,26 @@ func (h *Handlers) UploadPassport(c echo.Context) error {
 	dst := filepath.Join(uploadDir, filename)
 
 	src, err := file.Open()
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	defer src.Close()
 
 	out, err := os.Create(dst)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	defer out.Close()
 
 	buf := make([]byte, 32*1024)
 	for {
 		n, readErr := src.Read(buf)
-		if n > 0 { out.Write(buf[:n]) }
-		if readErr != nil { break }
+		if n > 0 {
+			out.Write(buf[:n])
+		}
+		if readErr != nil {
+			break
+		}
 	}
 
 	baseURL := os.Getenv("BASE_URL")
