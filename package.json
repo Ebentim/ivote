@@ -1,0 +1,32 @@
+{
+  "name": "ivote",
+  "private": true,
+  "version": "1.0.0",
+  "description": "iVote — Secure in-house digital voting platform",
+  "workspaces": [
+    "apps/web",
+    "apps/desktop",
+    "apps/mobile"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "dev:desktop": "pnpm --filter desktop dev",
+    "build": "pnpm --filter web build",
+    "build:desktop": "pnpm --filter desktop build",
+    "build:mobile": "pnpm --filter mobile build",
+    "server:dev": "cd server && air",
+    "server:build": "cd server && go build -o bin/ivote ./cmd/api",
+    "lint": "pnpm --filter web lint",
+    "typecheck": "pnpm --filter web typecheck"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron",
+      "esbuild"
+    ]
+  }
+}

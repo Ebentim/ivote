@@ -1,0 +1,43 @@
+# ── Dependencies ──────────────────────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+
+# ── Build outputs ─────────────────────────────────────────────────────────────
+apps/web/dist/
+apps/desktop/dist-electron/
+apps/mobile/android/
+apps/mobile/ios/
+
+# ── Environment / secrets ─────────────────────────────────────────────────────
+.env
+server/.env
+# Keep the example
+!server/.env.example
+
+# ── Go ────────────────────────────────────────────────────────────────────────
+server/bin/
+server/uploads/
+server/go.sum
+
+# ── Editor / OS ───────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# ── TypeScript ────────────────────────────────────────────────────────────────
+*.tsbuildinfo
+
+# ── Capacitor ────────────────────────────────────────────────────────────────
+apps/mobile/.gradle/
+
+# ── Test ─────────────────────────────────────────────────────────────────────
+coverage/
