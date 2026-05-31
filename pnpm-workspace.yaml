@@ -1,3 +1,6 @@
 packages:
   - 'apps/*'
   - 'server'
+allowBuilds:
+  electron: false
+  esbuild: false
